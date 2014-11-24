@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function hentResultat() {
+    request = new XMLHttpRequest();
+	request.open('GET', 'https://api.spark.io/v1/devices/53ff6d066667574836370967/savedCounter?access_token=e515e98469950739c58ebcb4e4bcd86a2e8c8dca', true);
+
+	request.onload = function() {
+	  if (this.status >= 200 && this.status < 400){
+	    // Success!
+	    data = JSON.parse(this.response);
+	    window.alert("sometext");
+	  } else {
+	    // We reached our target server, but it returned an error
+	    window.alert("Feilet!!");
+	  }
+	};
+
+	request.onerror = function() {
+	  // There was a connection error of some sort
+	};
+
+	request.send();
+}
+</script>
+</head>
+
+<body>
+
+<h1>Sjekk din reaksjon</h1>
+
+<button type="button" onclick="hentResultat()">Hent resultat</button>
+
+</body>
+</html> 
