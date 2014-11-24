@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
 <script>
 function hentResultat() {
     request = new XMLHttpRequest();
@@ -13,12 +21,13 @@ function hentResultat() {
 	    window.alert("sometext");
 	  } else {
 	    // We reached our target server, but it returned an error
-	    window.alert("Feilet!!");
+	    window.alert("Ajaj. Dette gikk ikke bra. Se i konsollet");
 	  }
 	};
 
 	request.onerror = function() {
 	  // There was a connection error of some sort
+	  window.alert("Off. Dette gikk ikke bra. Se i konsollet");
 	};
 
 	request.send();
@@ -28,9 +37,17 @@ function hentResultat() {
 
 <body>
 
-<h1>Sjekk din reaksjon</h1>
+<h1 class="text-center">Test din reaksjon</h1>
 
-<button type="button" onclick="hentResultat()">Hent resultat</button>
+<br/>
+
+<p class="text-center">Trykk på den store grønne knappen</p>
+<p class="text-center">Vent på at lyset tennes</p>
+<p class="text-center">Trykk på knappen så raskt du klarer</p>
+
+<br/>
+
+<button type="button" class="btn btn-primary center-block" onclick="hentResultat()">Hent resultat</button>
 
 </body>
 </html> 
