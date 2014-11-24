@@ -10,6 +10,29 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
 <script>
+
+var hentingAvDataSkruddPaa = false;
+
+function startStoppHentingAvData() {
+    if (hentingAvDataSkruddPaa == true) {
+    	hentingAvDataSkruddPaa = false;
+    	document.getElementById("knapp").innerHTML = "Restart henting av resultater";
+    } else 	{
+    	hentingAvDataSkruddPaa = true;
+    	loopMedTimeout();
+    	document.getElementById("knapp").innerHTML = "Stopp henting av resultater";
+    }	
+}
+
+function loopMedTimeout() {
+    setTimeout(function () {
+    	if (hentingAvDataSkruddPaa == true) {
+    		hentResultat();
+    	}	
+        loopMedTimeout();
+    }, 1000);
+}
+
 function hentResultat() {
     request = new XMLHttpRequest();
 	request.open('GET', 'https://api.spark.io/v1/devices/53ff6d066667574836370967/savedCounter?access_token=e515e98469950739c58ebcb4e4bcd86a2e8c8dca', true);
@@ -18,16 +41,29 @@ function hentResultat() {
 	  if (this.status >= 200 && this.status < 400){
 	    // Success!
 	    data = JSON.parse(this.response);
-	    window.alert("sometext");
+	    // Viser bare resulat hvis det er mindre enn 2000 loops.  
+	    if (data.result < 2000) {
+	    	document.getElementById("resultat").innerHTML = data.result;
+	    }	
+	    // Setter bakgrunnsfarge utfra resultat
+	    if (data.result < 100) {
+	    	document.body.style.backgroundColor="#32CD32";
+	    } else if (data.result < 200) {
+	    	document.body.style.backgroundColor="#FF8C00";
+	    } else if (data.result < 1000) {
+	    	document.body.style.backgroundColor="#FF0000";
+	  	} else {
+	    	document.body.style.backgroundColor="#FFFFFF";
+	  	}  	
 	  } else {
 	    // We reached our target server, but it returned an error
-	    window.alert("Ajaj. Dette gikk ikke bra. Se i konsollet");
+	    document.getElementById("resultat").innerHTML = "Ajaj. Dette gikk ikke bra. Se i konsollet" + data.result;
 	  }
 	};
 
 	request.onerror = function() {
 	  // There was a connection error of some sort
-	  window.alert("Off. Dette gikk ikke bra. Se i konsollet");
+	  document.getElementById("resultat").innerHTML = "Off. Dette gikk ikke bra. Se i konsollet" + data.result;
 	};
 
 	request.send();
@@ -37,7 +73,7 @@ function hentResultat() {
 
 <body>
 
-<h1 class="text-center">Test din reaksjon</h1>
+<h1 class="text-center">Får du servering?</h1>
 
 <br/>
 
@@ -47,7 +83,11 @@ function hentResultat() {
 
 <br/>
 
-<button type="button" class="btn btn-primary center-block" onclick="hentResultat()">Hent resultat</button>
+<button id="knapp" type="button" class="btn btn-primary center-block" onclick="startStoppHentingAvData()">Start henting av resultater</button>
+
+<br/>
+
+<p id="resultat" class="text-center" style="font-size:250px"></p>
 
 </body>
 </html> 
