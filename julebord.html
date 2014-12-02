@@ -9,6 +9,8 @@
 <!-- Optional theme -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
+<script src="Chart.js"></script>
+
 <script>
 
 var hentingAvDataSkruddPaa = false;
@@ -16,11 +18,11 @@ var hentingAvDataSkruddPaa = false;
 function startStoppHentingAvData() {
     if (hentingAvDataSkruddPaa == true) {
     	hentingAvDataSkruddPaa = false;
-    	document.getElementById("knapp").innerHTML = "Restart henting av resultater";
+    	document.getElementById("knapp").innerHTML = "Restart";
     } else 	{
     	hentingAvDataSkruddPaa = true;
     	loopMedTimeout();
-    	document.getElementById("knapp").innerHTML = "Stopp henting av resultater";
+    	document.getElementById("knapp").innerHTML = "Stopp";
     }	
 }
 
@@ -41,19 +43,21 @@ function hentResultat() {
 	  if (this.status >= 200 && this.status < 400){
 	    // Success!
 	    data = JSON.parse(this.response);
-	    // Viser bare resulat hvis det er mindre enn 2000 loops.  
-	    if (data.result < 2000) {
-	    	document.getElementById("resultat").innerHTML = data.result;
+	    // Viser bare resulat hvis det er mindre enn 1000 loops.  
+	    if (data.result < 1000) {
+	    	var milliseconds = data.result * 5;
+	    	document.getElementById("resultat").innerHTML = milliseconds;
 	    }	
 	    // Setter bakgrunnsfarge utfra resultat
 	    if (data.result < 100) {
 	    	document.body.style.backgroundColor="#32CD32";
-	    } else if (data.result < 200) {
+	    	myBarChart.datasets[0].bars[0].value = myBarChart.datasets[0].bars[0].value + 1;
+	    } else if (data.result < 300) {
 	    	document.body.style.backgroundColor="#FF8C00";
+	    	myBarChart.datasets[0].bars[1].value = myBarChart.datasets[0].bars[1].value + 1;
 	    } else if (data.result < 1000) {
 	    	document.body.style.backgroundColor="#FF0000";
-	  	} else {
-	    	document.body.style.backgroundColor="#FFFFFF";
+	    	myBarChart.datasets[0].bars[2].value = myBarChart.datasets[0].bars[2].value + 1;
 	  	}  	
 	  } else {
 	    // We reached our target server, but it returned an error
@@ -68,26 +72,107 @@ function hentResultat() {
 
 	request.send();
 }
+
+function mockResultat() {
+	var result = Math.floor((Math.random() * 999) + 1);
+
+	var milliseconds = result * 5;
+	document.getElementById("resultat").innerHTML = milliseconds;
+
+    // Setter bakgrunnsfarge utfra resultat
+    if (result < 100) {
+    	document.body.style.backgroundColor="#32CD32";
+    	myBarChart.datasets[0].bars[0].value = myBarChart.datasets[0].bars[0].value + 1;
+    } else if (result < 200) {
+    	document.body.style.backgroundColor="#FF8C00";
+    	myBarChart.datasets[0].bars[1].value = myBarChart.datasets[0].bars[1].value + 1;
+    } else if (result < 1000) {
+    	document.body.style.backgroundColor="#FF0000";
+    	myBarChart.datasets[0].bars[2].value = myBarChart.datasets[0].bars[2].value + 1;
+  	} 	
+  	myBarChart.update();
+	
+}
 </script>
 </head>
 
 <body>
 
-<h1 class="text-center">Får du servering?</h1>
+<div class="row">
+  <div class="col-md-12">
+	<h1 class="text-center">Får du servering?</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+	<h1 class="text-center"></h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+	<h2 class="text-center">Trykk på knappen</h2>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+	<h2 class="text-center">Når lyset tennes, trykk så raskt du kan!</h2>
+  </div>
+</div>
 
 <br/>
 
-<p class="text-center">Trykk på den store grønne knappen</p>
-<p class="text-center">Vent på at lyset tennes</p>
-<p class="text-center">Trykk på knappen så raskt du klarer</p>
+<div class="row">
+	<div class="col-md-1"></div>
+  	<div class="col-md-5">
+  		<canvas id="myChart" width="400" height="400"></canvas>
+  	</div>
+  	<div class="col-md-1"></div>
+  	<div class="col-md-5"><p id="resultat" style="font-size:200px"></p></div>
+</div>
+<div class="row">
+	<div class="col-md-1"></div>
+  	<div class="col-md-5">
+  		<p style="font-size:20px">Statistikk for kvelden</p>
+  	</div>
+  	<div class="col-md-1"></div>
+  	<div class="col-md-5">
+  		<p style="font-size:20px">Ditt resulat i millisekunder</p>
+  	</div>
+</div>
 
+<div class="row">
+  <div class="col-md-11"></div>
+  	<div class="col-md-1">
+  	<button id="knapp" type="button" class="btn btn-primary" onclick="startStoppHentingAvData()">Start</button>
+  </div>
+</div>
 <br/>
+<div class="row">
+  <div class="col-md-11"></div>
+  	<div class="col-md-1">
+  	<button id="mockknapp" type="button" class="btn btn-info" onclick="mockResultat()">Test</button>
+  </div>
+</div>
 
-<button id="knapp" type="button" class="btn btn-primary center-block" onclick="startStoppHentingAvData()">Start henting av resultater</button>
+<script>
+var data = {
+    labels: ["Grønn", "Orange", "Rød"],
+    datasets: [
+        {
+            label: "My First dataset",
+            fillColor: "rgba(220,220,220,0.5)",
+            strokeColor: "rgba(220,220,220,0.8)",
+            highlightFill: "rgba(220,220,220,0.75)",
+            highlightStroke: "rgba(220,220,220,1)",
+            data: [0, 0, 0]
+        }
+    ]
+};
 
-<br/>
-
-<p id="resultat" class="text-center" style="font-size:250px"></p>
+// Get the context of the canvas element we want to select
+var ctx = document.getElementById("myChart").getContext("2d");
+var myBarChart = new Chart(ctx).Bar(data);
+</script>
 
 </body>
 </html> 
