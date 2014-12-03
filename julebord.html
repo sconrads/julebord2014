@@ -34,7 +34,7 @@ function loopMedTimeout() {
     		hentResultat();
     	}	
         loopMedTimeout();
-    }, 1000);
+    }, 300);
 }
 
 function hentResultat() {
@@ -65,13 +65,13 @@ function hentResultat() {
 	  	}	
 	  } else {
 	    // We reached our target server, but it returned an error
-	    document.getElementById("resultat").innerHTML = "Skål!" + data.result;
+	    document.getElementById("resultat").innerHTML = "Skål!";
 	  }
 	};
 
 	request.onerror = function() {
 	  // There was a connection error of some sort
-	  document.getElementById("resultat").innerHTML = "God jul!" + data.result;
+	  document.getElementById("resultat").innerHTML = "God jul!";
 	};
 
 	request.send();
