@@ -17,6 +17,10 @@ var hentingAvDataSkruddPaa = false;
 
 var lastResult = 0;
 
+var besteResultat = 1000;
+
+var antallStemmer = 0;
+
 function startStoppHentingAvData() {
     if (hentingAvDataSkruddPaa == true) {
     	hentingAvDataSkruddPaa = false;
@@ -46,9 +50,9 @@ function hentResultat() {
 	    // Success!
 	    data = JSON.parse(this.response);
 	    // Viser bare resulat hvis det er mindre enn 1000 loops.  
-	    if (data.result < 2000 && lastResult != data.result) {
-	    	var milliseconds = data.result * 5;
-	    	document.getElementById("resultat").innerHTML = milliseconds;
+	    if (data.result < 1000 && lastResult != data.result) {
+	    	var seconds = (data.result * 5) / 1000;
+	    	document.getElementById("resultat").innerHTML = seconds;
 	    	lastResult = data.result;	
 		    // Setter bakgrunnsfarge utfra resultat
 		    if (data.result < 100) {
@@ -61,7 +65,15 @@ function hentResultat() {
 		    	document.body.style.backgroundColor="#FF0000";
 		    	myBarChart.datasets[0].bars[2].value = myBarChart.datasets[0].bars[2].value + 1;
 		  	} 
-		  	myBarChart.update();   		
+		  	myBarChart.update(); 
+		  	antallStemmer++;
+		  	document.getElementById("antStemmer").innerHTML = "Antall trykk: " + antallStemmer;	
+		  	if (besteResultat > data.result) {
+				document.getElementById("bestetid").innerHTML = "Ny bestetid! " + seconds + " sekunder. Gratulerer!!!";	
+				besteResultat = data.result;
+			} else	{
+				document.getElementById("bestetid").innerHTML = "Bestetid: " + (besteResultat * 5 / 1000) + " sekunder";	
+			}	  		
 	  	}	
 	  } else {
 	    // We reached our target server, but it returned an error
@@ -80,8 +92,8 @@ function hentResultat() {
 function mockResultat() {
 	var result = Math.floor((Math.random() * 999) + 1);
 
-	var milliseconds = result * 5;
-	document.getElementById("resultat").innerHTML = milliseconds;
+	var seconds = (result * 5) / 1000;
+	document.getElementById("resultat").innerHTML = seconds;
 
     // Setter bakgrunnsfarge utfra resultat
     if (result < 100) {
@@ -95,6 +107,14 @@ function mockResultat() {
     	myBarChart.datasets[0].bars[2].value = myBarChart.datasets[0].bars[2].value + 1;
   	} 	
   	myBarChart.update();
+  	antallStemmer++;
+  	document.getElementById("antStemmer").innerHTML = "Antall trykk: " + antallStemmer;	
+  	if (besteResultat > result) {
+		document.getElementById("bestetid").innerHTML = "Ny bestetid! " + seconds + " sekunder. Gratulerer!!!";	
+		besteResultat = result;
+	} else	{
+		document.getElementById("bestetid").innerHTML = "Bestetid: " + (besteResultat * 5 / 1000) + " sekunder";	
+	}
 	
 }
 </script>
@@ -103,59 +123,60 @@ function mockResultat() {
 <body>
 
 <div class="row">
-  <div class="col-md-12">
-	<h1 class="text-center">Får du servering?</h1>
+  <div class="col-md-1">
   </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-	<h1 class="text-center"></h1>
+  <div class="col-md-10 alert alert-info alert-fixed-top">
+	<h1 class="text-center" style="font-size:100px">Får du servering?</h1>
+	<h2 class="text-center">Start testen ved å trykke på knappen</h2>
+	<h2 class="text-center">Når lyset tennes igjen, trykk så raskt du kan!</h2>
+	<h3 class="text-center">NB! Det kan ta opptil 9 sekunder før lyset tennes</h3>
   </div>
+  <div class="col-md-1"></div>
 </div>
-<div class="row">
-  <div class="col-md-12">
-	<h2 class="text-center">Trykk på knappen</h2>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-	<h2 class="text-center">Når lyset tennes, trykk så raskt du kan!</h2>
-  </div>
-</div>
-
-<br/>
 
 <div class="row">
 	<div class="col-md-1"></div>
-  	<div class="col-md-5">
+  	<div class="col-md-4 well">
   		<canvas id="myChart" width="400" height="400"></canvas>
   	</div>
   	<div class="col-md-1"></div>
-  	<div class="col-md-5"><p id="resultat" style="font-size:200px"></p></div>
+  	<div class="col-md-5 well"><p id="resultat" style="font-size:200px"></p></div>
+  	<div class="col-md-1"></div>
 </div>
 <div class="row">
 	<div class="col-md-1"></div>
-  	<div class="col-md-5">
-  		<p style="font-size:20px">Statistikk for kvelden</p>
+  	<div class="col-md-4 well">
+  		<div style="font-size:20px">Statistikk for kvelden</div>
   	</div>
   	<div class="col-md-1"></div>
-  	<div class="col-md-5">
-  		<p style="font-size:20px">Ditt resulat i millisekunder</p>
+  	<div class="col-md-5 well">
+  		<div style="font-size:20px">Ditt resulat i sekunder</div>
   	</div>
+  	<div class="col-md-1"></div>
+</div>
+<div class="row">
+	<div class="col-md-1"></div>
+  	<div class="col-md-4 well">
+  		<div id="bestetid" style="font-size:20px"></div>
+  	</div>
+  	<div class="col-md-1"></div>
+  	<div class="col-md-5 well">
+  		<div style="font-size:20px" id="antStemmer"></div>
+  	</div>
+  	<div class="col-md-1"></div>
 </div>
 
+<br/>
+
 <div class="row">
-  <div class="col-md-11"></div>
-  	<div class="col-md-1">
+  <div class="col-md-9"></div>
+  <div class="col-md-1">
   	<button id="knapp" type="button" class="btn btn-primary" onclick="startStoppHentingAvData()">Start</button>
   </div>
-</div>
-<br/>
-<div class="row">
-  <div class="col-md-11"></div>
-  	<div class="col-md-1">
+  <div class="col-md-1">
   	<button id="mockknapp" type="button" class="btn btn-info" onclick="mockResultat()">Test</button>
   </div>
+  <div class="col-md-1"></div>
 </div>
 
 <script>
@@ -163,8 +184,8 @@ var data = {
     labels: ["Grønn", "Orange", "Rød"],
     datasets: [
         {
-            label: "My First dataset",
-            fillColor: "rgba(220,220,220,0.5)",
+            label: "Julebordet 2014",
+            fillColor: "rgba(73,170,66,0.7)",
             strokeColor: "rgba(220,220,220,0.8)",
             highlightFill: "rgba(220,220,220,0.75)",
             highlightStroke: "rgba(220,220,220,1)",
