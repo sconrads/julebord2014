@@ -35,13 +35,15 @@ function startStoppHentingAvData() {
 function loopMedTimeout() {
     setTimeout(function () {
     	if (hentingAvDataSkruddPaa == true) {
-    		hentResultat();
+    		hentResultat(loopMedTimeout);
+    		console.log("Henter resultat");
+    	} else {
+    		loopMedTimeout();
     	}	
-        loopMedTimeout();
-    }, 300);
+    }, 2500);
 }
 
-function hentResultat() {
+function hentResultat(callback) {
     request = new XMLHttpRequest();
 	request.open('GET', 'https://api.spark.io/v1/devices/53ff6d066667574836370967/savedCounter?access_token=e515e98469950739c58ebcb4e4bcd86a2e8c8dca', true);
 
@@ -58,27 +60,32 @@ function hentResultat() {
 		    if (data.result < 100) {
 		    	document.body.style.backgroundColor="#32CD32";
 		    	myBarChart.datasets[0].bars[0].value = myBarChart.datasets[0].bars[0].value + 1;
+		    	document.getElementById("gratulerer").innerHTML = "Det ble servering på deg!!!";
 		    } else if (data.result < 300) {
 		    	document.body.style.backgroundColor="#FF8C00";
 		    	myBarChart.datasets[0].bars[1].value = myBarChart.datasets[0].bars[1].value + 1;
+		    	document.getElementById("gratulerer").innerHTML = "Det blir servering under tvil ...";
 		    } else if (data.result < 1000) {
 		    	document.body.style.backgroundColor="#FF0000";
 		    	myBarChart.datasets[0].bars[2].value = myBarChart.datasets[0].bars[2].value + 1;
+		    	document.getElementById("gratulerer").innerHTML = "Hmmm! For mange akevitt?";
 		  	} 
 		  	myBarChart.update(); 
 		  	antallStemmer++;
 		  	document.getElementById("antStemmer").innerHTML = "Antall trykk: " + antallStemmer;	
 		  	if (besteResultat > data.result) {
-				document.getElementById("bestetid").innerHTML = "Ny bestetid! " + seconds + " sekunder. Gratulerer!!!";	
+				document.getElementById("bestetid").innerHTML = "Ny bestetid! " + seconds + " sekunder";
+				document.getElementById("gratulerer").innerHTML = "Gratulerer!!!!!!!!!";	
 				besteResultat = data.result;
 			} else	{
-				document.getElementById("bestetid").innerHTML = "Bestetid: " + (besteResultat * 5 / 1000) + " sekunder";	
+				document.getElementById("bestetid").innerHTML = "Bestetid: " + (besteResultat * 5 / 1000) + " sekunder";		
 			}	  		
 	  	}	
 	  } else {
 	    // We reached our target server, but it returned an error
 	    document.getElementById("resultat").innerHTML = "Skål!";
 	  }
+	  callback();
 	};
 
 	request.onerror = function() {
@@ -99,18 +106,22 @@ function mockResultat() {
     if (result < 100) {
     	document.body.style.backgroundColor="#32CD32";
     	myBarChart.datasets[0].bars[0].value = myBarChart.datasets[0].bars[0].value + 1;
+    	document.getElementById("gratulerer").innerHTML = "Det ble servering på deg!!!";
     } else if (result < 200) {
     	document.body.style.backgroundColor="#FF8C00";
     	myBarChart.datasets[0].bars[1].value = myBarChart.datasets[0].bars[1].value + 1;
+    	document.getElementById("gratulerer").innerHTML = "Det blir servering under tvil ...";
     } else if (result < 1000) {
     	document.body.style.backgroundColor="#FF0000";
     	myBarChart.datasets[0].bars[2].value = myBarChart.datasets[0].bars[2].value + 1;
+    	document.getElementById("gratulerer").innerHTML = "Hmmm! For mange akevitt?";
   	} 	
   	myBarChart.update();
   	antallStemmer++;
   	document.getElementById("antStemmer").innerHTML = "Antall trykk: " + antallStemmer;	
   	if (besteResultat > result) {
-		document.getElementById("bestetid").innerHTML = "Ny bestetid! " + seconds + " sekunder. Gratulerer!!!";	
+		document.getElementById("bestetid").innerHTML = "Ny bestetid! " + seconds + " sekunder";
+		document.getElementById("gratulerer").innerHTML = "Gratulerer!!!!!!!!!";		
 		besteResultat = result;
 	} else	{
 		document.getElementById("bestetid").innerHTML = "Bestetid: " + (besteResultat * 5 / 1000) + " sekunder";	
@@ -140,7 +151,8 @@ function mockResultat() {
   		<canvas id="myChart" width="400" height="400"></canvas>
   	</div>
   	<div class="col-md-1"></div>
-  	<div class="col-md-5 well"><p id="resultat" style="font-size:200px"></p></div>
+  	<div class="col-md-5 well"><p id="resultat" style="font-size:200px"></p>
+  		<p style="font-size:20px">Ditt resulat i sekunder</p></div>
   	<div class="col-md-1"></div>
 </div>
 <div class="row">
@@ -150,7 +162,7 @@ function mockResultat() {
   	</div>
   	<div class="col-md-1"></div>
   	<div class="col-md-5 well">
-  		<div style="font-size:20px">Ditt resulat i sekunder</div>
+  		<div style="font-size:20px" id="antStemmer"></div>
   	</div>
   	<div class="col-md-1"></div>
 </div>
@@ -161,7 +173,7 @@ function mockResultat() {
   	</div>
   	<div class="col-md-1"></div>
   	<div class="col-md-5 well">
-  		<div style="font-size:20px" id="antStemmer"></div>
+  		<div id="gratulerer" style="font-size:20px"></div>
   	</div>
   	<div class="col-md-1"></div>
 </div>
