@@ -85,13 +85,13 @@ function hentResultat(callback) {
 	    // We reached our target server, but it returned an error
 	    document.getElementById("resultat").innerHTML = "Skål!";
 	  }
-	  callback();
 	};
 
 	request.onerror = function() {
 	  // There was a connection error of some sort
 	  document.getElementById("resultat").innerHTML = "God jul!";
 	};
+	callback();
 
 	request.send();
 }
@@ -152,7 +152,7 @@ function mockResultat() {
   	</div>
   	<div class="col-md-1"></div>
   	<div class="col-md-5 well"><p id="resultat" style="font-size:200px"></p>
-  		<p style="font-size:20px">Ditt resulat i sekunder</p></div>
+  		<p style="font-size:20px">Ditt resultat i sekunder</p></div>
   	<div class="col-md-1"></div>
 </div>
 <div class="row">
